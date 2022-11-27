@@ -1,0 +1,97 @@
+
+
+getgenv().teamCheck = true
+getgenv().zaza = true
+
+local RunService = game:GetService("RunService")
+
+
+local function getClosest(cframe)
+   local ray = Ray.new(cframe.Position, cframe.LookVector).Unit
+   
+   local target = nil
+   local mag = math.huge
+   
+   for i,v in pairs(game.Players:GetPlayers()) do
+       if v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("HumanoidRootPart") and v ~= game.Players.LocalPlayer and (v.Team ~= game.Players.LocalPlayer.Team or (not teamCheck)) then
+           local magBuf = (v.Character.Head.Position - ray:ClosestPoint(v.Character.Head.Position)).Magnitude
+           
+           if magBuf < mag then
+               mag = magBuf
+               target = v
+           end
+       end
+   end
+   
+   return target
+end
+
+loop = RunService.RenderStepped:Connect(function()
+  if zaza == true then
+      spawn(function()
+   local UserInputService = game:GetService("UserInputService")
+   local pressed = --[[UserInputService:IsKeyDown(Enum.KeyCode.E)]] UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+   local localPlay = game.Players.localPlayer.Character
+   local cam = workspace.CurrentCamera
+   local zz = workspace.CurrentCamera.ViewportSize/2
+   
+
+       local Line = Drawing.new("Line")
+       local curTar = getClosest(cam.CFrame)
+       local ssHeadPoint = cam:WorldToScreenPoint(curTar.Character.Head.Position)
+       ssHeadPoint = Vector2.new(ssHeadPoint.X, ssHeadPoint.Y)
+       if (ssHeadPoint - zz).Magnitude < 150 then
+           workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(cam.CFrame.Position, curTar.Character.Head.Position), 0.035)
+       
+   end
+   
+end)
+end
+end)
+local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/notification_gui_library.lua", true))()
+
+
+
+local plr = game:GetService("Players").LocalPlayer
+local mouse = plr:GetMouse()
+
+mouse.KeyDown:connect(function(key)
+if key == "z" then
+if zaza == true then getgenv().zaza = false
+               game:GetService('StarterGui'):SetCore('SendNotification', {
+       Title = 'AimAssist off',
+       Text = "",
+       Duration = 1
+   })
+    else 
+        
+           game:GetService('StarterGui'):SetCore('SendNotification', {
+       Title = 'AimAssist on',
+       Text = "",
+       Duration = 1
+   })
+
+getgenv().zaza = true
+end
+end
+end)
+mouse.KeyDown:connect(function(key)
+if key == "x" then
+if teamCheck == true then getgenv().teamCheck = false
+               game:GetService('StarterGui'):SetCore('SendNotification', {
+       Title = 'teamCheck off',
+       Text = "",
+       Duration = 1
+   })
+    else 
+        
+           game:GetService('StarterGui'):SetCore('SendNotification', {
+       Title = 'teamCheck on',
+       Text = "",
+       Duration = 1
+   })
+
+getgenv().teamCheck = true
+end
+end
+end)
